@@ -24,7 +24,7 @@ export class CategoriasPage {
     this.categoriaService.findAll()
       .subscribe(
         data => this.items = data,
-        err => console.log(err)
+        err => {}
       )
 
   }
