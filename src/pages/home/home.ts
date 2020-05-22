@@ -38,7 +38,7 @@ export class HomePage {
           this.auth.successfulLogin(data.headers.get('Authorization'))
           this.navCtrl.setRoot('CategoriasPage')
         },
-        err => console.log(err)
+        err => {console.log(err)}
       )
   }
 
