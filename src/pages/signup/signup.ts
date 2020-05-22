@@ -1,10 +1,11 @@
 import { Component } from '@angular/core';
-import { IonicPage, NavController, NavParams } from 'ionic-angular';
+import { IonicPage, NavController, NavParams, AlertController } from 'ionic-angular';
 import { FormGroup, FormBuilder, Validators } from '@angular/forms';
 import { CidadeService } from '../../services/domain/cidade.service';
 import { EstadoService } from '../../services/domain/estado.service';
 import { EstadoDTO } from '../../models/estado.dto';
 import { CidadeDTO } from '../../models/cidade.dto';
+import { ClienteService } from '../../services/domain/cliente.service';
 
 
 @IonicPage()
@@ -24,7 +25,9 @@ export class SignupPage {
     public navParams: NavParams,
     public formBuilder: FormBuilder,
     public cidadeService: CidadeService,
-    public estadoService: EstadoService
+    public estadoService: EstadoService,
+    public clienteService: ClienteService,
+    public alertCTRL: AlertController
   ) {
     this.formGroup = this.formBuilder.group({
       nome: [
@@ -37,7 +40,7 @@ export class SignupPage {
       ],
       tipo: ['1', [Validators.required]],
       cpfOuCnpj: [
-        '15124585474',
+        '30911870040',
         [Validators.required, Validators.minLength(11), Validators.maxLength(14)]
       ],
       senha: ['123123', [Validators.required]],
@@ -46,7 +49,7 @@ export class SignupPage {
       complemento: ['Apto 3', []],
       bairro: ['Copacabana', []],
       cep: ['72015035', [Validators.required]],
-      telefone1: ['61999545555', [Validators.required]],
+      telefone: ['6199545555', [Validators.required]],
       telefone2: ['', []],
       telefone3: ['', []],
       estadoId: [null, [Validators.required]],
@@ -67,7 +70,32 @@ export class SignupPage {
   }
 
   signupUser(){
-    console.log('Enviando formulario')
+    if(this.formGroup.invalid){
+      return
+    }
+    this.clienteService.insert(this.formGroup.value)
+      .subscribe(
+        data => this.showInsertOK(),
+        err => console.log(err)
+      )
+  }
+
+  showInsertOK(){
+    let alert = this.alertCTRL.create({
+      title: 'Sucesso!',
+      message: 'Cadatro efetuado com sucesso',
+      enableBackdropDismiss: false,
+      buttons: [
+        {
+          text: 'OK',
+          handler: () => {
+            this.navCtrl.pop();
+          }
+        }
+      ]
+    })
+
+    alert.present()
   }
 
   updateCidades(){
