@@ -31,6 +31,17 @@ export class HomePage {
     this.menu.swipeEnable(true);
   }
 
+  ionViewDidEnter(){
+    this.auth.refreshToken()
+      .subscribe(
+        data => {
+          this.auth.successfulLogin(data.headers.get('Authorization'))
+          this.navCtrl.setRoot('CategoriasPage')
+        },
+        err => {console.log(err)}
+      )
+  }
+
   login(){
     this.auth.authenticate(this.creds)
       .subscribe(
