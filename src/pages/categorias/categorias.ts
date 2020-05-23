@@ -26,7 +26,10 @@ export class CategoriasPage {
         data => this.items = data,
         err => {}
       )
+  }
 
+  showProdutos() {
+    this.navCtrl.push('ProdutosPage')
   }
 
 }
