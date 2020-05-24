@@ -19,6 +19,8 @@
       </p>
     </ion-card-content>
   </ion-card>
-
   <button ion-button block outline (click)="addToCart(item)">Adicionar ao carrinho</button>
+  <ion-fab top right edge>
+    <button navPush="CartPage" ion-fab mini><ion-icon name="cart"></ion-icon></button>
+  </ion-fab>
 </ion-content>
