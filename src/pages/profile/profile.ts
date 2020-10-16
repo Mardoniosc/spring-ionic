@@ -5,6 +5,7 @@ import { ClienteService } from "../../services/domain/cliente.service";
 import { ClienteDTO } from "../../models/cliente.dto";
 import { API_CONFIG } from "../../config/api.config";
 import { Camera, CameraOptions } from "@ionic-native/camera";
+import { DomSanitizer } from "@angular/platform-browser";
 
 @IonicPage()
 @Component({
@@ -16,6 +17,8 @@ export class ProfilePage {
 
   picture: string;
 
+  profileImagem;
+
   cameraOn: boolean = false;
 
   constructor(
@@ -23,8 +26,11 @@ export class ProfilePage {
     public navParams: NavParams,
     public camera: Camera,
     public storange: StorangeService,
-    public clienteService: ClienteService
-  ) {}
+    public clienteService: ClienteService,
+    public sanitizer: DomSanitizer
+  ) {
+    this.profileImagem = '../../assets/imgs/avatar-blank.png';
+  }
 
   ionViewDidLoad() {
     this.loadData();
@@ -53,28 +59,45 @@ export class ProfilePage {
     this.clienteService.getImageFromBucket(this.cliente.id).subscribe(
       (data) => {
         this.cliente.imageUrl = `${API_CONFIG.baseBucket}/cp${this.cliente.id}.jpg`;
+        this.blobToDataUrl(data).then(
+            dataUrl => {
+              let str : string  = dataUrl as string
+              this.profileImagem = this.sanitizer.bypassSecurityTrustUrl(str);
+            }
+          )
       },
-      (err) => console.log(err)
+      (err) => {
+        this.profileImagem = '../../assets/imgs/avatar-blank.png';
+      }
     );
   }
 
+  blobToDataUrl(blob) {
+    return new Promise((fulfill, reject) => {
+      let reader = new FileReader();
+      reader.onerror = reject;
+      reader.onload = (e) => fulfill(reader.result);
+      reader.readAsDataURL(blob);
+    })
+  }
+
   getCameraPicture() {
+
     this.cameraOn = true;
 
     const options: CameraOptions = {
       quality: 100,
       destinationType: this.camera.DestinationType.DATA_URL,
       encodingType: this.camera.EncodingType.PNG,
-      mediaType: this.camera.MediaType.PICTURE,
-    };
+      mediaType: this.camera.MediaType.PICTURE
+    }
 
-    this.camera.getPicture(options).then(
-      (imageData) => {
-        this.picture = "data:image/png;base64," + imageData;
-        this.cameraOn = false;
-      },
-      (err) => {}
-    );
+    this.camera.getPicture(options).then((imageData) => {
+     this.picture = 'data:image/png;base64,' + imageData;
+     this.cameraOn = false;
+    }, (err) => {
+      this.cameraOn = false;
+    });
   }
 
   getGalleryPicture() {
