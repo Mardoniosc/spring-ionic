@@ -18,4 +18,8 @@ export class PedidoService {
       },
     )
   }
+
+  findAll(){
+    return this.http.get(`${API_CONFIG.baseUrl}/pedidos`)
+  }
 }

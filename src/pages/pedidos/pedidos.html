@@ -7,24 +7,26 @@
   </ion-navbar>
 </ion-header>
 
-
 <ion-content padding>
-  <h2>Todos os Pedidos</h2>
-
-  <ion-card>
+  <ion-card *ngFor="let pedido of pedidos">
     <ion-card-header>
-      Cod. Pedido 1
+      <strong>
+        Cod. pedido {{ pedido.id }}
+      </strong>
     </ion-card-header>
     <ion-list>
-      <ion-item>
-        <h2>Mouse</h2>
-        <p><strong>Valor:</strong> R$ 80,00</p>
-        <p><strong>Qtd: </strong> 1</p>
-        <p><strong>SubTotal:</strong> R$ 80,00</p>
+      <ion-item *ngFor="let item of pedido.itens">
+        <h2>{{item.produto.nome}}</h2>
+        <p><strong>Valor: </strong>{{item.produto.preco | currency}}</p>
+        <p><strong>Qtd: </strong>{{item.quantidade}}</p>
+        <p item-end><strong>SubTotal: </strong> {{item.produto.preco * item.quantidade | currency}}</p>
       </ion-item>
-
       <ion-item>
-        <h2>Valor Total <strong>R$ 80,00</strong></h2>
+        <h2>Pagamento: {{ pedido.pagamento.estado }}</h2>
+      </ion-item>
+      <ion-item>
+        <h2>Total</h2>
+        <h2 item-end>{{pedido.valorTotal | currency}}</h2>
       </ion-item>
     </ion-list>
   </ion-card>
